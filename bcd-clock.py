@@ -2,19 +2,25 @@
 
 import max7219.led as led
 from time import sleep
-import datetime
+import datetime, thread
 
 matrix = led.matrix(cascaded=1)
 
 
 def main():
-    border = 0
-    if (border == 1):
-        matrix.letter(0, 219)
-    while True:
-        now = datetime.datetime.now()
-        display_number(now.hour, now.minute, now.second)
-        sleep(0.025)
+    prev_sec = datetime.datetime.now().second
+    while(datetime.datetime.now().second == prev_sec):
+        pass
+    sleep(0.4)
+    while(True):
+        thread.start_new_thread(clock_update, ())
+        sleep(0.99871)
+        # ^ sleep of just less than a second
+        # ^ actual value based on experimental data
+
+def clock_update():
+    now = datetime.datetime.now()
+    display_number(now.hour, now.minute, now.second)
 
 
 def display_number(hours, minutes, seconds):
@@ -46,6 +52,8 @@ def matrix_led(binary_list):
 def den_to_bin(n):
     return '{0:04b}'.format(int(n))
 
+
+#main() #uncomment when debugging
 
 try:
     main()
